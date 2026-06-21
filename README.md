@@ -1,4 +1,5 @@
-Rapid Equity — Trading & Research Terminal (prototype)
+<<<<<<< HEAD
+# Rapid Equity — Trading & Research Terminal (prototype)
 
 Getting started
 
@@ -67,3 +68,6 @@ npx vitest
 ```
 
 
+=======
+# Rapid Equity
+>>>>>>> main
