@@ -1,0 +1,31 @@
+:root{
+  --bg:#081124;
+  --panel:#0e1724;
+  --muted:#9aa8bf;
+  --accent:#5fe3a1;
+  --danger:#ff6b6b;
+  --glass:rgba(255,255,255,0.03);
+  --gap:12px;
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+html,body,#root{height:100%;}
+body{margin:0;background:linear-gradient(180deg,#071422 0%, #031018 100%);color:#dfe9f3}
+.app-shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.main-content{padding:16px}
+.nav{padding:16px;background:var(--panel);border-right:1px solid rgba(255,255,255,0.03)}
+.nav h2{margin:0 0 12px 0;font-size:14px}
+.nav a{display:block;color:var(--muted);padding:8px;border-radius:6px;text-decoration:none;margin-bottom:6px}
+.nav a.active{color:var(--accent);background:rgba(95,227,161,0.06)}
+.card{background:var(--glass);padding:12px;border-radius:8px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kpi{display:flex;flex-direction:column}
+.kpi .value{font-size:20px;font-weight:700}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px}
+.muted{color:var(--muted);font-size:13px}
+.small{font-size:12px}
+.btn{background:var(--accent);color:#042022;padding:8px 10px;border-radius:6px;border:none;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.form-row{display:flex;gap:8px;align-items:center}
+input,select,textarea{background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit;padding:8px;border-radius:6px}
