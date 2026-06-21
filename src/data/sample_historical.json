@@ -1,0 +1,20 @@
+[{
+  "t": "2023-08-01T09:30:00.000Z",
+  "quotes": [{"instrumentId":"AAPL:ID","bid":189.14,"ask":189.18,"last":189.16,"volume":100,"time":"2023-08-01T09:30:00.000Z"}],
+  "trades": [{"instrumentId":"AAPL:ID","price":189.16,"size":100,"side":"buy","time":"2023-08-01T09:30:00.000Z"}]
+},
+{
+  "t": "2023-08-01T09:30:01.000Z",
+  "quotes": [{"instrumentId":"AAPL:ID","bid":189.12,"ask":189.20,"last":189.15,"volume":120,"time":"2023-08-01T09:30:01.000Z"}],
+  "trades": [{"instrumentId":"AAPL:ID","price":189.15,"size":50,"side":"sell","time":"2023-08-01T09:30:01.000Z"}]
+},
+{
+  "t": "2023-08-01T09:30:02.000Z",
+  "quotes": [{"instrumentId":"AAPL:ID","bid":189.10,"ask":189.22,"last":189.18,"volume":200,"time":"2023-08-01T09:30:02.000Z"}],
+  "trades": [{"instrumentId":"AAPL:ID","price":189.18,"size":150,"side":"buy","time":"2023-08-01T09:30:02.000Z"}]
+},
+{
+  "t": "2023-08-01T09:30:03.000Z",
+  "quotes": [{"instrumentId":"AAPL:ID","bid":189.05,"ask":189.25,"last":189.10,"volume":300,"time":"2023-08-01T09:30:03.000Z"}],
+  "trades": [{"instrumentId":"AAPL:ID","price":189.10,"size":200,"side":"sell","time":"2023-08-01T09:30:03.000Z"}]
+}]
