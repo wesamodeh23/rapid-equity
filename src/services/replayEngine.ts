@@ -18,6 +18,9 @@ export default class ReplayEngine {
   }
 
   async loadFromUrl(url: string) {
+    if (url.startsWith('//')) {
+      throw new Error('Protocol-relative URLs are not allowed')
+    }
     if (url.startsWith('http://') || url.startsWith('https://')) {
       const parsed = new URL(url)
       if (parsed.origin !== window.location.origin) {
