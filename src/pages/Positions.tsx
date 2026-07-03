@@ -1,5 +1,6 @@
 import React from 'react'
 import { useAppState } from '../context/AppState'
+import EmptyTableRow from '../components/EmptyTableRow'
 
 export default function Positions() {
   const { state } = useAppState()
@@ -13,7 +14,7 @@ export default function Positions() {
             <tr><th>Instrument</th><th>Side</th><th>Size</th><th>Avg Price</th></tr>
           </thead>
           <tbody>
-            {state.positions.length === 0 && <tr><td colSpan={4} className="muted">No positions.</td></tr>}
+            {state.positions.length === 0 && <EmptyTableRow colSpan={4} message="No positions." />}
             {state.positions.map(p => (
               <tr key={p.id}>
                 <td>{p.instrumentId}</td>

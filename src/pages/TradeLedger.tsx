@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { useAppState } from '../context/AppState'
+import { downloadFile } from '../lib/downloadFile'
+import { formatDateTime } from '../lib/formatters'
+import EmptyTableRow from '../components/EmptyTableRow'
 
 export default function TradeLedger() {
   const { state } = useAppState()
@@ -11,15 +14,7 @@ export default function TradeLedger() {
     const header = ['instrumentId,price,size,side,time']
     const lines = rows.map(r => `${r.instrumentId},${r.price},${r.size},${r.side},${r.time}`)
     const csv = header.concat(lines).join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `trades_${Date.now()}.csv`
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    URL.revokeObjectURL(url)
+    downloadFile(csv, `trades_${Date.now()}.csv`)
   }
 
   return (
@@ -34,9 +29,9 @@ export default function TradeLedger() {
         <table className="table" style={{ marginTop: 12 }}>
           <thead><tr><th>#</th><th>Symbol</th><th>Size</th><th>Price</th><th>Side</th><th>Time</th></tr></thead>
           <tbody>
-            {rows.length === 0 && <tr><td colSpan={6} className="muted">No trades recorded</td></tr>}
+            {rows.length === 0 && <EmptyTableRow colSpan={6} message="No trades recorded" />}
             {rows.map((t,i) => (
-              <tr key={i}><td>{i+1}</td><td>{t.instrumentId}</td><td>{t.size}</td><td>{t.price}</td><td>{t.side}</td><td className="small muted">{new Date(t.time).toLocaleString()}</td></tr>
+              <tr key={i}><td>{i+1}</td><td>{t.instrumentId}</td><td>{t.size}</td><td>{t.price}</td><td>{t.side}</td><td className="small muted">{formatDateTime(t.time)}</td></tr>
             ))}
           </tbody>
         </table>

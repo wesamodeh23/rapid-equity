@@ -3,6 +3,7 @@ import { useAppState } from '../context/AppState'
 import { evaluateTradeIdea } from '../lib/riskEngine'
 import { scoreTrade } from '../lib/score'
 import Explanation from '../components/Explanation'
+import { createJournalEntry } from '../lib/journalEntries'
 
 export default function TradeGenerator() {
   const { state, dispatch } = useAppState()
@@ -21,7 +22,7 @@ export default function TradeGenerator() {
       const hasFail = (t.riskChecks ?? []).some((r: any) => r.severity === 'fail' && !r.passed)
       if (!hasFail) dispatch({ type: 'APPROVE_TRADE_IDEA', payload: { id: t.id } })
     })
-    dispatch({ type: 'ADD_JOURNAL', payload: { id: `auto-approve-${Date.now()}`, notes: 'Auto-approved passing candidate trades', timestamp: new Date().toISOString() } as any })
+    dispatch({ type: 'ADD_JOURNAL', payload: createJournalEntry(`auto-approve-${Date.now()}`, 'Auto-approved passing candidate trades') })
   }
 
   return (

@@ -1,6 +1,8 @@
 import React from 'react'
 import { useAppState } from '../context/AppState'
 import { marginRequiredForNotional, computePortfolioVaR } from '../lib/riskEngine'
+import { computeTotalNotional } from '../lib/portfolio'
+import { formatCurrency } from '../lib/formatters'
 
 export default function Risk() {
   const { state, dispatch } = useAppState()
@@ -9,7 +11,7 @@ export default function Risk() {
     dispatch({ type: 'SET_SETTINGS', payload: { maxRiskPerTrade: v } })
   }
 
-  const totalNotional = state.positions.reduce((s, p) => s + Math.abs(p.avgPrice * p.size), 0)
+  const totalNotional = computeTotalNotional(state.positions)
   const margin = marginRequiredForNotional(totalNotional, state.settings)
   const vaR = computePortfolioVaR(state.positions, state.settings)
 
@@ -29,11 +31,11 @@ export default function Risk() {
         </div>
 
         <div style={{ marginTop: 12 }}>
-          <div className="muted small">Total positions notional: ${totalNotional.toFixed(2)}</div>
-          <div className="muted small">Estimated margin required: ${margin.toFixed(2)}</div>
+          <div className="muted small">Total positions notional: {formatCurrency(totalNotional)}</div>
+          <div className="muted small">Estimated margin required: {formatCurrency(margin)}</div>
           <div style={{ marginTop: 8 }}>
-            <div className="muted small">Portfolio VaR ({(vaR.confidence*100).toFixed(0)}%): ${vaR.var.toFixed(2)}</div>
-            <div className="muted small">Portfolio CVaR (ES): ${vaR.cvar.toFixed(2)}</div>
+            <div className="muted small">Portfolio VaR ({(vaR.confidence*100).toFixed(0)}%): {formatCurrency(vaR.var)}</div>
+            <div className="muted small">Portfolio CVaR (ES): {formatCurrency(vaR.cvar)}</div>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { useAppState } from '../context/AppState'
+import ProviderStatus from './ProviderStatus'
 
 const links = [
   ['Overview', '/overview'],
@@ -20,8 +20,6 @@ const links = [
 ]
 
 export default function NavBar() {
-  const { state } = useAppState()
-
   return (
     <nav className="nav">
       <h2>Rapid Equity</h2>
@@ -31,10 +29,8 @@ export default function NavBar() {
         </NavLink>
       ))}
 
-      <div style={{ marginTop: 12 }} className="card small muted">
-        <div>Provider: {state.providerStatus.mode}</div>
-        <div className="small">Status: {state.providerStatus.connected ? 'connected' : 'disconnected'}</div>
-        <div className="small">Last: {state.providerStatus.lastUpdate ? new Date(state.providerStatus.lastUpdate).toLocaleTimeString() : '—'}</div>
+      <div style={{ marginTop: 12 }}>
+        <ProviderStatus compact />
       </div>
     </nav>
   )

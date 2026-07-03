@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useAppState } from '../context/AppState'
+import { createJournalEntry } from '../lib/journalEntries'
+import { formatDateTime } from '../lib/formatters'
 
 export default function Journal() {
   const { state, dispatch } = useAppState()
@@ -7,8 +9,7 @@ export default function Journal() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
-    const entry = { id: `j-${Date.now()}`, notes: note, timestamp: new Date().toISOString() }
-    dispatch({ type: 'ADD_JOURNAL', payload: entry as any })
+    dispatch({ type: 'ADD_JOURNAL', payload: createJournalEntry(`j-${Date.now()}`, note) })
     setNote('')
   }
 
@@ -29,7 +30,7 @@ export default function Journal() {
           <div className="muted small">Notes are linked to trades and approvals where applicable.</div>
         </div>
         <ul>
-          {state.journal.map(j => <li key={j.id} className="small">{new Date(j.timestamp).toLocaleString()}: {j.notes}</li>)}
+          {state.journal.map(j => <li key={j.id} className="small">{formatDateTime(j.timestamp)}: {j.notes}</li>)}
           {state.journal.length === 0 && <div className="muted">No journal entries yet.</div>}
         </ul>
       </div>
