@@ -20,8 +20,7 @@ export default function Research() {
       setReplayStatus('running')
     } catch (err:any) {
       setReplayStatus('idle')
-      // eslint-disable-next-line no-console
-      console.error('Replay load failed', err)
+      setMsg(`Replay load failed: ${err?.message ?? String(err)}`)
     }
   }
 

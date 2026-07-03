@@ -3,6 +3,7 @@ import type { Instrument, Quote, Trade, TradeIdea, Position, JournalEntry } from
 import MockDatabentoAdapter from '../providers/databento/MockDatabentoAdapter'
 import type { DatabentoAdapter } from '../providers/databento/DatabentoAdapter'
 import RealDatabentoAdapter from '../providers/databento/RealDatabentoAdapter'
+import Logger from '../lib/logger'
 
 type Settings = {
   databentoApiKey?: string
@@ -118,14 +119,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       mounted = false
       if (unsubQ) unsubQ()
       if (unsubT) unsubT()
-      try { adapter.disconnect() } catch {}
+      try { adapter.disconnect() } catch (err) { Logger.warn('AppProvider', 'adapter disconnect failed', err) }
     }
   }, [adapter])
 
   // expose adapter for simple page-level access (not required but useful during dev)
   useEffect(() => {
-    try { (window as any).__APP_ADAPTER__ = adapter } catch (err) {}
-    return () => { try { delete (window as any).__APP_ADAPTER__ } catch (err) {} }
+    try { (window as any).__APP_ADAPTER__ = adapter } catch (err) { Logger.warn('AppProvider', 'failed to set window adapter reference', err) }
+    return () => { try { delete (window as any).__APP_ADAPTER__ } catch (err) { Logger.warn('AppProvider', 'failed to clean up window adapter reference', err) } }
   }, [adapter])
 
   return (
