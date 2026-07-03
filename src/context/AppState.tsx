@@ -122,12 +122,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [adapter])
 
-  // expose adapter for simple page-level access (not required but useful during dev)
-  useEffect(() => {
-    try { (window as any).__APP_ADAPTER__ = adapter } catch (err) {}
-    return () => { try { delete (window as any).__APP_ADAPTER__ } catch (err) {} }
-  }, [adapter])
-
   return (
     <AppContext.Provider value={{ state, dispatch, adapter, setAdapter }}>
       {children}

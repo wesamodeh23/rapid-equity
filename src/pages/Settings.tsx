@@ -56,7 +56,7 @@ export default function Settings() {
         <div className="form-row">
           <div style={{ flex: 1 }}>
             <div className="muted small">Databento API Key</div>
-            <input value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Enter Databento API key" />
+            <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Enter Databento API key" autoComplete="off" />
           </div>
           <div style={{ width: 220 }}>
             <div className="muted small">Dataset</div>

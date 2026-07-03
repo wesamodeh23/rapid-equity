@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Rapid Equity — Trading & Research Terminal (prototype)
 
 Getting started
@@ -66,8 +65,3 @@ npm test
 # or for an interactive watch:
 npx vitest
 ```
-
-
-=======
-# Rapid Equity
->>>>>>> main

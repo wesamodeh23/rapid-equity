@@ -18,6 +18,12 @@ export default class ReplayEngine {
   }
 
   async loadFromUrl(url: string) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      const parsed = new URL(url)
+      if (parsed.origin !== window.location.origin) {
+        throw new Error('Replay data must be loaded from the same origin')
+      }
+    }
     const res = await fetch(url)
     if (!res.ok) throw new Error('Failed to load replay data')
     this.frames = await res.json()

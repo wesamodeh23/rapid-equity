@@ -10,6 +10,10 @@ export default function TradeGenerator() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
+    if (!form.symbol.trim()) return
+    if (!Number.isFinite(form.entry) || form.entry <= 0) return
+    if (!Number.isFinite(form.stop) || form.stop <= 0) return
+    if (!Number.isFinite(form.size) || form.size <= 0) return
     const id = `${form.symbol}:${Date.now()}`
     const idea = { id, instrumentId: form.symbol, direction: form.direction as any, entry: form.entry, stop: form.stop, size: form.size, score: Math.random() }
     const checks = evaluateTradeIdea(idea as any, state.settings, { positions: state.positions, accountBalance: 1000000, quotes: state.quotes })

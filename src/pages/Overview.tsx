@@ -17,6 +17,9 @@ export default function Overview() {
 
   function submitPos(e: React.FormEvent) {
     e.preventDefault()
+    if (!posForm.symbol.trim()) return
+    if (!Number.isFinite(posForm.size) || posForm.size <= 0) return
+    if (!Number.isFinite(posForm.avgPrice) || posForm.avgPrice <= 0) return
     const id = `${posForm.symbol}:${Date.now()}`
     dispatch({ type: 'ADD_POSITION', payload: { id, instrumentId: posForm.symbol, size: posForm.size, avgPrice: posForm.avgPrice, side: posForm.side as any } })
     setPosForm({ symbol: '', size: 0, avgPrice: 0, side: 'long' })
