@@ -1,5 +1,6 @@
 import type { DatabentoAdapter } from '../providers/databento/DatabentoAdapter'
 import type { InstrumentDefinition } from '../models'
+import Logger from '../lib/logger'
 
 const CACHE_KEY = 'refcache_v1'
 const DEFAULT_TTL = 1000 * 60 * 60 // 1 hour
@@ -12,12 +13,13 @@ function readCache(): Record<string, CacheEntry> {
     if (!raw) return {}
     return JSON.parse(raw)
   } catch (err) {
+    Logger.warn('referenceCache', 'failed to parse cached data, resetting cache', err)
     return {}
   }
 }
 
 function writeCache(obj: Record<string, CacheEntry>) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(obj)) } catch (err) { /* ignore */ }
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(obj)) } catch (err) { Logger.warn('referenceCache', 'failed to write to localStorage', err) }
 }
 
 export async function getInstrument(adapter: DatabentoAdapter, symbol: string, ttl = DEFAULT_TTL): Promise<InstrumentDefinition> {

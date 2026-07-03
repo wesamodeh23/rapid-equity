@@ -1,4 +1,5 @@
 import type { TradeIdea, RiskCheckResult, Position, Quote } from '../models'
+import Logger from './logger'
 
 export function evaluateTradeIdea(idea: TradeIdea, settings: any, context?: { positions?: Position[]; accountBalance?: number; quotes?: Record<string, Quote>; realizedDailyLoss?: number }): RiskCheckResult[] {
   const results: RiskCheckResult[] = []
@@ -70,7 +71,9 @@ export function evaluateTradeIdea(idea: TradeIdea, settings: any, context?: { po
         inputs: { spread, maxSpread }
       })
     }
-  } catch (err) {}
+  } catch (err) {
+    Logger.warn('riskEngine', 'spread check failed for instrument', idea.instrumentId, err)
+  }
 
   // Max daily loss check (best-effort if realizedDailyLoss provided)
   if (settings?.maxDailyLoss) {

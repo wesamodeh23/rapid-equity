@@ -31,9 +31,9 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
       this.connected = true
       Logger.info('RealDatabentoAdapter', 'connected')
     } catch (err:any) {
-      Logger.warn('RealDatabentoAdapter', 'connect validation failed', err?.message || err)
-      // still mark as connected; subscriptions may fail later
-      this.connected = true
+      Logger.error('RealDatabentoAdapter', 'connect validation failed — marking as disconnected', err?.message || err)
+      this.connected = false
+      throw err
     }
   }
 
@@ -43,7 +43,9 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
     try {
       this.shouldReconnect = false
       this.ws?.close()
-    } catch (err) {}
+    } catch (err) {
+      Logger.warn('RealDatabentoAdapter', 'error closing websocket during disconnect', err)
+    }
     Logger.info('RealDatabentoAdapter', 'disconnected')
   }
 
@@ -54,7 +56,7 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
       this.quoteHandlers = this.quoteHandlers.filter(h => h !== fn)
       // if no handlers left, close ws to conserve resources
       if (this.quoteHandlers.length === 0 && this.tradeHandlers.length === 0) {
-        try { this.ws?.close() } catch (err) {}
+        try { this.ws?.close() } catch (err) { Logger.warn('RealDatabentoAdapter', 'error closing idle websocket', err) }
       }
     }
   }
@@ -65,7 +67,7 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
     return () => {
       this.tradeHandlers = this.tradeHandlers.filter(h => h !== fn)
       if (this.quoteHandlers.length === 0 && this.tradeHandlers.length === 0) {
-        try { this.ws?.close() } catch (err) {}
+        try { this.ws?.close() } catch (err) { Logger.warn('RealDatabentoAdapter', 'error closing idle websocket', err) }
       }
     }
   }
@@ -110,13 +112,13 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
       if (msg?.type === 'quote' && msg.data) {
         const d = msg.data
         const q: Quote = { instrumentId: d.instrument_id ?? d.instrumentId ?? d.symbol, bid: d.bid ?? d.b ?? 0, ask: d.ask ?? d.a ?? 0, last: d.last ?? d.p ?? 0, volume: d.v ?? d.volume ?? 0, time: d.t ?? d.time ?? new Date().toISOString() }
-        this.quoteHandlers.forEach(h => { try { h(q) } catch (e) {} })
+        this.quoteHandlers.forEach(h => { try { h(q) } catch (e) { Logger.error('RealDatabentoAdapter', 'quote handler threw', e) } })
         return
       }
       if (msg?.type === 'trade' && msg.data) {
         const d = msg.data
         const t: Trade = { instrumentId: d.instrument_id ?? d.instrumentId ?? d.symbol, price: d.price ?? d.p ?? 0, size: d.size ?? d.s ?? 0, side: (d.side === 'sell' || d.side === 'ask') ? 'sell' : 'buy', time: d.t ?? d.time ?? new Date().toISOString() }
-        this.tradeHandlers.forEach(h => { try { h(t) } catch (e) {} })
+        this.tradeHandlers.forEach(h => { try { h(t) } catch (e) { Logger.error('RealDatabentoAdapter', 'trade handler threw', e) } })
         return
       }
       // sometimes providers send arrays of events
@@ -124,7 +126,7 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
         msg.forEach((item) => this.handleWsMessage(JSON.stringify(item)))
       }
     } catch (err:any) {
-      // ignore parse errors
+      Logger.warn('RealDatabentoAdapter', 'failed to parse websocket message', err?.message ?? String(err))
     }
   }
 
@@ -188,9 +190,8 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
       const rows = (json?.data ?? json)?.map((r: any) => ({ instrumentId: `${symbol.toUpperCase()}:ID`, t: r.t ?? r.time ?? r.timestamp, o: r.o ?? r.open, h: r.h ?? r.high, l: r.l ?? r.low, c: r.c ?? r.close, v: r.v ?? r.volume }))
       return rows
     } catch (err:any) {
-      Logger.warn('RealDatabentoAdapter', 'fetchHistoricalBars failed', err?.message ?? String(err))
-      // fallback to an empty array to let the UI handle lack of data gracefully
-      return []
+      Logger.error('RealDatabentoAdapter', 'fetchHistoricalBars failed', err?.message ?? String(err))
+      throw err
     }
   }
 }

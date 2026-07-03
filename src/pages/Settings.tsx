@@ -10,17 +10,22 @@ export default function Settings() {
   const [testMsg, setTestMsg] = useState('')
 
   async function testConnection() {
-    // if an adapter is set, use it; otherwise test using a real adapter instance
-    if (adapter) {
-      const res = await adapter.testConnection()
+    try {
+      // if an adapter is set, use it; otherwise test using a real adapter instance
+      if (adapter) {
+        const res = await adapter.testConnection()
+        setTestMsg(res.message || (res.ok ? 'ok' : 'failed'))
+        dispatch({ type: 'UPDATE_PROVIDER_STATUS', payload: { connected: res.ok, lastUpdate: Date.now() } })
+        return
+      }
+      const tmp = new RealDatabentoAdapter(apiKey, dataset)
+      const res = await tmp.testConnection()
       setTestMsg(res.message || (res.ok ? 'ok' : 'failed'))
       dispatch({ type: 'UPDATE_PROVIDER_STATUS', payload: { connected: res.ok, lastUpdate: Date.now() } })
-      return
+    } catch (err: any) {
+      setTestMsg(`Connection test error: ${err?.message ?? String(err)}`)
+      dispatch({ type: 'UPDATE_PROVIDER_STATUS', payload: { connected: false } })
     }
-    const tmp = new RealDatabentoAdapter(apiKey, dataset)
-    const res = await tmp.testConnection()
-    setTestMsg(res.message || (res.ok ? 'ok' : 'failed'))
-    dispatch({ type: 'UPDATE_PROVIDER_STATUS', payload: { connected: res.ok, lastUpdate: Date.now() } })
   }
 
   function save() {
@@ -43,8 +48,8 @@ export default function Settings() {
       setTestMsg(res.message || (res.ok ? 'connected' : 'failed'))
       dispatch({ type: 'UPDATE_PROVIDER_STATUS', payload: { connected: res.ok, lastUpdate: Date.now() } })
     } catch (err: any) {
-      setTestMsg(err?.message ?? String(err))
-      // fallback to mock
+      setTestMsg(`Live connection failed: ${err?.message ?? String(err)}`)
+      dispatch({ type: 'UPDATE_PROVIDER_STATUS', payload: { connected: false } })
       setAdapter(new MockDatabentoAdapter())
     }
   }
