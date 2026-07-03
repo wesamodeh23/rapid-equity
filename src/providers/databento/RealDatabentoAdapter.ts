@@ -74,14 +74,14 @@ export default class RealDatabentoAdapter implements DatabentoAdapter {
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) return
     if (!this.apiKey) return
     const dataset = this.dataset ?? ''
-    // Best-effort websocket endpoint for Databento; adjust per provider docs.
-    const url = `wss://stream.databento.com/v1/stream?dataset=${encodeURIComponent(dataset)}&token=${encodeURIComponent(this.apiKey)}`
+    const url = `wss://stream.databento.com/v1/stream?dataset=${encodeURIComponent(dataset)}`
     try {
       this.shouldReconnect = true
       this.ws = new WebSocket(url)
       this.ws.onopen = () => {
         Logger.info('RealDatabentoAdapter', 'ws open')
         this.reconnectAttempts = 0
+        this.ws?.send(JSON.stringify({ type: 'auth', token: this.apiKey }))
       }
       this.ws.onmessage = (ev) => this.handleWsMessage(ev.data)
       this.ws.onclose = (ev) => {

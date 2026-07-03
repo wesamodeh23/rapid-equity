@@ -31,7 +31,7 @@ export default function Research() {
       setMsg('No adapter configured. Add Databento key in Settings or connect adapter.')
       return
     }
-    const target = adapter ?? (window as any).__APP_ADAPTER__ ?? null
+    const target = adapter ?? null
     if (!target) {
       setMsg('No adapter available for historical queries (use Settings -> Connect Live)')
       return

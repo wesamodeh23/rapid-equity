@@ -14,6 +14,7 @@ export default function PreTradeApproval() {
 
   function forceApprove(id: string) {
     const reason = window.prompt('Enter override reason (recorded in journal)')
+    if (reason == null || reason.trim() === '') return
     approve(id)
     dispatch({ type: 'ADD_JOURNAL', payload: { id: `override-${Date.now()}`, notes: `Force approved ${id}: ${reason}`, timestamp: new Date().toISOString() } as any })
   }

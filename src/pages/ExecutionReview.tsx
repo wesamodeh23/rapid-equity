@@ -7,9 +7,12 @@ export default function ExecutionReview() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const form = new FormData(e.target as HTMLFormElement)
-    const instrumentId = (form.get('symbol') as string) || 'MANUAL:ID'
+    const instrumentId = (form.get('symbol') as string)?.trim()
+    if (!instrumentId) return
     const price = Number(form.get('price'))
     const size = Number(form.get('size'))
+    if (!Number.isFinite(price) || price <= 0) return
+    if (!Number.isFinite(size) || size <= 0) return
     const side = (form.get('side') as string) || 'buy'
     const t = new Date().toISOString()
     dispatch({ type: 'ADD_TRADE', payload: { instrumentId, price, size, side, time: t } as any })
