@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useAppState } from '../context/AppState'
 import { spread, midPrice } from '../lib/featureEngineering'
 import { getInstrument } from '../services/referenceCache'
+import { secondsAgo } from '../lib/formatters'
+import EmptyTableRow from '../components/EmptyTableRow'
 
 export default function MarketMonitor() {
   const { state, dispatch, adapter } = useAppState()
@@ -38,11 +40,11 @@ export default function MarketMonitor() {
             <tr><th>Symbol</th><th>Mid</th><th>Spread</th><th>Bid</th><th>Ask</th><th>Vol</th><th>Last update</th></tr>
           </thead>
           <tbody>
-            {symbols.length === 0 && <tr><td colSpan={7} className="muted">No real-time quotes yet.</td></tr>}
+            {symbols.length === 0 && <EmptyTableRow colSpan={7} message="No real-time quotes yet." />}
             {symbols.map(id => {
               const q = state.quotes[id]
-              const secondsAgo = q ? Math.round((Date.now() - new Date(q.time).getTime()) / 1000) : null
-              const stale = secondsAgo !== null && secondsAgo > 10
+              const elapsed = q ? secondsAgo(q.time) : null
+              const stale = elapsed !== null && elapsed > 10
               return (
                 <tr key={id}>
                   <td>{id.replace(':ID','')}</td>
@@ -51,7 +53,7 @@ export default function MarketMonitor() {
                   <td>{q ? q.bid : '—'}</td>
                   <td>{q ? q.ask : '—'}</td>
                   <td>{q ? q.volume : '—'}</td>
-                  <td className="small muted">{q ? `${secondsAgo}s${stale ? ' (stale)' : ''}` : '—'}</td>
+                  <td className="small muted">{q ? `${elapsed}s${stale ? ' (stale)' : ''}` : '—'}</td>
                 </tr>
               )
             })}

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useAppState } from '../context/AppState'
 import useTradeMetrics from '../hooks/useTradeMetrics'
 import Explanation from '../components/Explanation'
+import { formatTime } from '../lib/formatters'
+import EmptyTableRow from '../components/EmptyTableRow'
 
 export default function OrderFlow() {
   const { state } = useAppState()
@@ -44,9 +46,9 @@ export default function OrderFlow() {
               <table className="table">
                 <thead><tr><th>Price</th><th>Size</th><th>Side</th><th>Time</th></tr></thead>
                 <tbody>
-                  {metrics.recent.length === 0 && <tr><td colSpan={4} className="muted">No recent trades for this symbol.</td></tr>}
+                  {metrics.recent.length === 0 && <EmptyTableRow colSpan={4} message="No recent trades for this symbol." />}
                   {metrics.recent.map((t, i) => (
-                    <tr key={i}><td>{t.price}</td><td>{t.size}</td><td>{t.side}</td><td className="small muted">{new Date(t.time).toLocaleTimeString()}</td></tr>
+                    <tr key={i}><td>{t.price}</td><td>{t.size}</td><td>{t.side}</td><td className="small muted">{formatTime(t.time)}</td></tr>
                   ))}
                 </tbody>
               </table>

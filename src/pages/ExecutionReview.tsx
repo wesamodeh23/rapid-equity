@@ -1,5 +1,7 @@
 import React from 'react'
 import { useAppState } from '../context/AppState'
+import { formatDateTime } from '../lib/formatters'
+import EmptyTableRow from '../components/EmptyTableRow'
 
 export default function ExecutionReview() {
   const { state, dispatch } = useAppState()
@@ -32,9 +34,9 @@ export default function ExecutionReview() {
         <table className="table" style={{ marginTop: 12 }}>
           <thead><tr><th>Instrument</th><th>Price</th><th>Size</th><th>Time</th></tr></thead>
           <tbody>
-            {state.trades.length === 0 && <tr><td colSpan={4} className="muted">No fills</td></tr>}
+            {state.trades.length === 0 && <EmptyTableRow colSpan={4} message="No fills" />}
             {state.trades.slice(0,50).map((t,i) => (
-              <tr key={i}><td>{t.instrumentId}</td><td>{t.price}</td><td>{t.size}</td><td className="small muted">{new Date(t.time).toLocaleString()}</td></tr>
+              <tr key={i}><td>{t.instrumentId}</td><td>{t.price}</td><td>{t.size}</td><td className="small muted">{formatDateTime(t.time)}</td></tr>
             ))}
           </tbody>
         </table>

@@ -1,4 +1,5 @@
 import type { TradeIdea, RiskCheckResult, Position, Quote } from '../models'
+import { computeTotalNotional, computeSymbolExposure } from './portfolio'
 
 export function evaluateTradeIdea(idea: TradeIdea, settings: any, context?: { positions?: Position[]; accountBalance?: number; quotes?: Record<string, Quote>; realizedDailyLoss?: number }): RiskCheckResult[] {
   const results: RiskCheckResult[] = []
@@ -29,7 +30,7 @@ export function evaluateTradeIdea(idea: TradeIdea, settings: any, context?: { po
   // Exposure by symbol check (concentration)
   const positions = context?.positions ?? []
   const account = context?.accountBalance ?? (settings?.accountBalance ?? 1000000)
-  const symbolExposure = positions.filter(p => p.instrumentId === idea.instrumentId).reduce((s, p) => s + Math.abs(p.avgPrice * p.size), 0)
+  const symbolExposure = computeSymbolExposure(positions, idea.instrumentId)
   const potentialExposure = symbolExposure + notional
   const maxExposurePerSymbol = settings?.maxExposurePerSymbol ?? (account * 0.2)
   results.push({
@@ -118,8 +119,8 @@ export function computeParametricCVaR(notional: number, sigma: number, confidenc
   return Math.abs(es * notional)
 }
 
-export function computePortfolioVaR(positions: any[], settings: any) {
-  const totalNotional = positions.reduce((s, p) => s + Math.abs(p.avgPrice * p.size), 0)
+export function computePortfolioVaR(positions: Position[], settings: any) {
+  const totalNotional = computeTotalNotional(positions)
   // estimate volatility from settings or default
   const sigma = settings?.portfolioVol ?? 0.02
   const confidence = settings?.varConfidence ?? 0.95

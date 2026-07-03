@@ -11,7 +11,10 @@ test('parametric VaR and CVaR produce positive values', () => {
 })
 
 test('computePortfolioVaR returns combined metrics', () => {
-  const positions = [{ avgPrice: 100, size: 10 }, { avgPrice: 50, size: -20 }]
+  const positions = [
+    { id: 'p1', instrumentId: 'AAPL', avgPrice: 100, size: 10, side: 'long' as const },
+    { id: 'p2', instrumentId: 'MSFT', avgPrice: 50, size: -20, side: 'short' as const }
+  ]
   const res = computePortfolioVaR(positions, { portfolioVol: 0.01, varConfidence: 0.95 })
   expect(res.totalNotional).toBeGreaterThan(0)
   expect(res.var).toBeGreaterThan(0)

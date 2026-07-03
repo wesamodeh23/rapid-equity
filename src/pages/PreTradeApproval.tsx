@@ -2,20 +2,21 @@ import React from 'react'
 import { useAppState } from '../context/AppState'
 import Explanation from '../components/Explanation'
 import { computeScenario } from '../lib/riskEngine'
+import { createJournalEntry } from '../lib/journalEntries'
+import EmptyTableRow from '../components/EmptyTableRow'
 
 export default function PreTradeApproval() {
   const { state, dispatch } = useAppState()
 
   function approve(id: string) {
     dispatch({ type: 'APPROVE_TRADE_IDEA', payload: { id } })
-    // add a brief journal entry for audit trail
-    dispatch({ type: 'ADD_JOURNAL', payload: { id: `auto-approve-${id}`, notes: `Trade ${id} approved via pre-trade UI`, timestamp: new Date().toISOString() } as any })
+    dispatch({ type: 'ADD_JOURNAL', payload: createJournalEntry(`auto-approve-${id}`, `Trade ${id} approved via pre-trade UI`) })
   }
 
   function forceApprove(id: string) {
     const reason = window.prompt('Enter override reason (recorded in journal)')
     approve(id)
-    dispatch({ type: 'ADD_JOURNAL', payload: { id: `override-${Date.now()}`, notes: `Force approved ${id}: ${reason}`, timestamp: new Date().toISOString() } as any })
+    dispatch({ type: 'ADD_JOURNAL', payload: createJournalEntry(`override-${Date.now()}`, `Force approved ${id}: ${reason}`) })
   }
 
   function canApprove(t: any) {
@@ -32,7 +33,7 @@ export default function PreTradeApproval() {
             <tr><th>Symbol</th><th>Entry</th><th>Stop</th><th>Size</th><th>Risk</th><th>Action</th></tr>
           </thead>
           <tbody>
-            {state.tradeIdeas.length === 0 && <tr><td colSpan={6} className="muted">No candidate trades.</td></tr>}
+            {state.tradeIdeas.length === 0 && <EmptyTableRow colSpan={6} message="No candidate trades." />}
             {state.tradeIdeas.map(t => (
               <tr key={t.id}>
                 <td>{t.instrumentId}</td>
